@@ -1,6 +1,6 @@
 # sftp-downloader
 
-This project contains a Spring Boot application that downloads files from an SFTP server based on the current date. Downloaded file names are stored in a PostgreSQL database so they are not retrieved twice.
+This project contains a Spring Boot application that downloads files from an SFTP server based on the most recent modification date. Downloaded file names are stored in a PostgreSQL database so they are not retrieved twice.
 
 ## Configuration
 

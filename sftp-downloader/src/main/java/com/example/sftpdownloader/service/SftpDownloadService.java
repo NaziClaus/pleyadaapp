@@ -44,7 +44,6 @@ public class SftpDownloadService {
 
     @Scheduled(fixedDelayString = "60000")
     public void downloadForToday() {
-        LocalDate today = LocalDate.now();
         JSch jsch = new JSch();
         Session session = null;
         Channel channel = null;
@@ -60,19 +59,26 @@ public class SftpDownloadService {
 
             @SuppressWarnings("unchecked")
             Vector<ChannelSftp.LsEntry> allFiles = sftp.ls(properties.getRemoteDir());
-            List<ChannelSftp.LsEntry> todaysFiles = allFiles.stream()
+            List<ChannelSftp.LsEntry> regularFiles = allFiles.stream()
                     .filter(f -> !f.getAttrs().isDir())
+                    .collect(Collectors.toList());
+            LocalDate latestDate = regularFiles.stream()
+                    .map(f -> Instant.ofEpochSecond(f.getAttrs().getMTime())
+                            .atZone(ZoneId.systemDefault()).toLocalDate())
+                    .max(LocalDate::compareTo)
+                    .orElse(LocalDate.now());
+            List<ChannelSftp.LsEntry> latestFiles = regularFiles.stream()
                     .filter(f -> Instant.ofEpochSecond(f.getAttrs().getMTime())
                             .atZone(ZoneId.systemDefault()).toLocalDate()
-                            .equals(today))
+                            .equals(latestDate))
                     .collect(Collectors.toList());
-            logger.info("Found {} files for {}", todaysFiles.size(), today);
+            logger.info("Found {} files for {}", latestFiles.size(), latestDate);
 
-            for (ChannelSftp.LsEntry entry : todaysFiles) {
+            for (ChannelSftp.LsEntry entry : latestFiles) {
                 String filename = entry.getFilename();
                 if (repository.existsByFilename(filename)) continue;
                 downloadFile(sftp, entry);
-                repository.save(new DownloadedFile(filename, today, LocalDateTime.now()));
+                repository.save(new DownloadedFile(filename, latestDate, LocalDateTime.now()));
                 logWeeklyComparison(sftp);
             }
         } catch (Exception e) {
