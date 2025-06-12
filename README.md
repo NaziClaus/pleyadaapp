@@ -14,7 +14,7 @@ SFTP_PORT=22
 SFTP_USERNAME=ftpuser
 SFTP_PASSWORD=lolik228
 SFTP_REMOTE_DIR=/
-SFTP_LOCAL_DIR=/app/download
+SFTP_LOCAL_DIR=D:/app/Sends
 SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sftpdb
 SPRING_DATASOURCE_USERNAME=sftpuser
 SPRING_DATASOURCE_PASSWORD=sftppass
@@ -47,6 +47,7 @@ command from the repository root so the Docker build context includes the
 ```bash
 docker compose up --build
 ```
-By default the compose file maps `D:/app/Sends` on the host to `/app/download`
-inside the container. Adjust this path if needed. Database data persists in a
-named Docker volume.
+The compose file maps the host directory `D:/app/Sends` to `/app/download` inside
+the container. The `SFTP_LOCAL_DIR` variable is overridden to `/app/download` so
+the application writes into the mounted folder. Adjust these paths if needed.
+Database data persists in a named Docker volume.

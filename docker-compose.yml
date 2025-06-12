@@ -13,6 +13,8 @@ services:
     depends_on:
       - db
     env_file: .env
+    environment:
+      SFTP_LOCAL_DIR: /app/download
     volumes:
       - D:/app/Sends:/app/download
     ports:

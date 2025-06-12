@@ -4,8 +4,9 @@ sftp:
   username: ${SFTP_USERNAME}
   password: ${SFTP_PASSWORD}
   remote-dir: ${SFTP_REMOTE_DIR:/}
-  # Path inside the container; host path is configured in docker-compose
-  local-dir: ${SFTP_LOCAL_DIR:/app/download}
+  # Local directory for downloaded files
+  # When using docker-compose this value is overridden to /app/download
+  local-dir: ${SFTP_LOCAL_DIR:D:/app/Sends}
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sftpdb}
