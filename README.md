@@ -36,7 +36,7 @@ mvn package
 java -jar target/sftp-downloader-1.0.0.jar
 ```
 
-The service checks the SFTP server every minute and downloads all files whose modification date matches today's date. A progress bar is displayed for each file and information about downloaded files is saved in PostgreSQL. After every download the service logs a comparison of files on the server versus those already stored locally for the past week.
+The service checks the SFTP server every minute and downloads all files whose modification date matches today's date. It prints how many files were found and shows a progress bar for each download including speed and target path. If a download is interrupted the next run resumes from where it stopped. Downloaded file names are stored in PostgreSQL so the same file is not retrieved twice. After every download the service logs a comparison of files on the server versus those already stored locally for the past week.
 
 ## Importing into IntelliJ IDEA
 

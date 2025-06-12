@@ -59,16 +59,20 @@ public class SftpDownloadService {
             ChannelSftp sftp = (ChannelSftp) channel;
 
             @SuppressWarnings("unchecked")
-            Vector<ChannelSftp.LsEntry> files = sftp.ls(properties.getRemoteDir());
-            for (ChannelSftp.LsEntry entry : files) {
-                if (entry.getAttrs().isDir()) continue;
-                LocalDate fileDate = Instant.ofEpochSecond(entry.getAttrs().getMTime())
-                        .atZone(ZoneId.systemDefault()).toLocalDate();
-                if (!fileDate.equals(today)) continue;
+            Vector<ChannelSftp.LsEntry> allFiles = sftp.ls(properties.getRemoteDir());
+            List<ChannelSftp.LsEntry> todaysFiles = allFiles.stream()
+                    .filter(f -> !f.getAttrs().isDir())
+                    .filter(f -> Instant.ofEpochSecond(f.getAttrs().getMTime())
+                            .atZone(ZoneId.systemDefault()).toLocalDate()
+                            .equals(today))
+                    .collect(Collectors.toList());
+            logger.info("Found {} files for {}", todaysFiles.size(), today);
+
+            for (ChannelSftp.LsEntry entry : todaysFiles) {
                 String filename = entry.getFilename();
                 if (repository.existsByFilename(filename)) continue;
                 downloadFile(sftp, entry);
-                repository.save(new DownloadedFile(filename, fileDate, LocalDateTime.now()));
+                repository.save(new DownloadedFile(filename, today, LocalDateTime.now()));
                 logWeeklyComparison(sftp);
             }
         } catch (Exception e) {
@@ -82,27 +86,40 @@ public class SftpDownloadService {
     private void downloadFile(ChannelSftp sftp, ChannelSftp.LsEntry entry) throws Exception {
         String remotePath = properties.getRemoteDir() + "/" + entry.getFilename();
         Path localPath = Path.of(properties.getLocalDir(), entry.getFilename());
-        try (InputStream in = sftp.get(remotePath); FileOutputStream out = new FileOutputStream(localPath.toFile())) {
-            long size = entry.getAttrs().getSize();
+
+        long remoteSize = entry.getAttrs().getSize();
+        long existing = Files.exists(localPath) ? Files.size(localPath) : 0;
+        logger.info("Downloading {} to {}", entry.getFilename(), localPath);
+
+        try (InputStream in = sftp.get(remotePath); FileOutputStream out = new FileOutputStream(localPath.toFile(), existing > 0)) {
+            if (existing > 0) {
+                in.skip(existing);
+            }
             byte[] buffer = new byte[8192];
-            long transferred = 0;
+            long transferred = existing;
+            long start = System.nanoTime();
             int read;
             while ((read = in.read(buffer)) != -1) {
                 out.write(buffer, 0, read);
                 transferred += read;
-                printProgress(transferred, size);
+                printProgress(entry.getFilename(), localPath, transferred, remoteSize, start);
             }
             System.out.println();
         }
         logger.info("Downloaded {}", entry.getFilename());
     }
 
-    private void printProgress(long done, long total) {
-        int width = 50;
+    private void printProgress(String name, Path path, long done, long total, long startNanos) {
+        int width = 40;
         int progress = (int) (done * width / total);
-        int percent = (int) (done * 100 / total);
-        String bar = "[" + "#".repeat(progress) + " ".repeat(width - progress) + "] " + percent + "%\r";
-        System.out.print(bar);
+        double percent = done * 100.0 / total;
+        double elapsed = (System.nanoTime() - startNanos) / 1_000_000_000.0;
+        double speed = elapsed > 0 ? (done / 1_048_576.0) / elapsed : 0; // MB/s
+        double doneGb = done / 1_073_741_824.0;
+        double totalGb = total / 1_073_741_824.0;
+        String bar = "[" + "#".repeat(progress) + " ".repeat(width - progress) + "]";
+        String msg = String.format("%s -> %s %s %.1f%% %.2f/%.2f GB %.2f MB/s\r", name, path, bar, percent, doneGb, totalGb, speed);
+        System.out.print(msg);
     }
 
     private void logWeeklyComparison(ChannelSftp sftp) {
