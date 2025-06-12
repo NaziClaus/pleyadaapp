@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: postgres:16
@@ -13,12 +12,9 @@ services:
     build: .
     depends_on:
       - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sftpdb
-      SPRING_DATASOURCE_USERNAME: sftpuser
-      SPRING_DATASOURCE_PASSWORD: sftppass
+    env_file: .env
     volumes:
-      - ./download:/app/download
+      - D:/app/Sends:/app/download
     ports:
       - "8080:8080"
     restart: unless-stopped

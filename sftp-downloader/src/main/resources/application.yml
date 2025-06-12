@@ -1,16 +1,16 @@
 sftp:
-  host: 146.59.54.218
-  port: 22
-  username: ftpuser
-  password: lolik228
-  remote-dir: /
-  # local-dir can be an absolute path like D:\app\Sends on Windows
-  local-dir: ./download
+  host: ${SFTP_HOST}
+  port: ${SFTP_PORT:22}
+  username: ${SFTP_USERNAME}
+  password: ${SFTP_PASSWORD}
+  remote-dir: ${SFTP_REMOTE_DIR:/}
+  # Path inside the container; host path is configured in docker-compose
+  local-dir: ${SFTP_LOCAL_DIR:/app/download}
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/sftpdb  # overridden in docker-compose
-    username: sftpuser
-    password: sftppass
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sftpdb}
+    username: ${SPRING_DATASOURCE_USERNAME:sftpuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:sftppass}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

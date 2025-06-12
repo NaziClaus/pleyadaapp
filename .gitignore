@@ -3,3 +3,4 @@ download/
 **/lastDownloadTime.txt
 target/
 mvn.log
+.env

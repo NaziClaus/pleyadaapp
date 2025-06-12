@@ -4,27 +4,20 @@ This project contains a Spring Boot application that downloads files from an SFT
 
 ## Configuration
 
-Edit `src/main/resources/application.yml` to set the SFTP connection properties,
-local download directory and database settings. The file contains an example
-using the credentials provided:
+Configuration is provided via environment variables so credentials are not kept
+in source control. Copy `.env.example` to `.env` and adjust the values if
+necessary. `application.yml` reads them automatically. Example values:
 
 ```
-sftp:
-  host: 146.59.54.218
-  port: 22
-  username: ftpuser
-  password: lolik228
-  remote-dir: /
-  local-dir: ./download  # or D:\app\Sends on Windows
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/sftpdb
-    username: sftpuser
-    password: sftppass
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
+SFTP_HOST=146.59.54.218
+SFTP_PORT=22
+SFTP_USERNAME=ftpuser
+SFTP_PASSWORD=lolik228
+SFTP_REMOTE_DIR=/
+SFTP_LOCAL_DIR=/app/download
+SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/sftpdb
+SPRING_DATASOURCE_USERNAME=sftpuser
+SPRING_DATASOURCE_PASSWORD=sftppass
 ```
 
 ## Running
@@ -54,6 +47,6 @@ command from the repository root so the Docker build context includes the
 ```bash
 docker compose up --build
 ```
-
-Downloaded files are stored in the `download` directory on your host machine and
-database data persists in a named Docker volume.
+By default the compose file maps `D:/app/Sends` on the host to `/app/download`
+inside the container. Adjust this path if needed. Database data persists in a
+named Docker volume.
