@@ -1,12 +1,12 @@
 # sftp-downloader
 
-This project contains a minimal Spring Boot application that periodically downloads the most recent file from an SFTP server.
+This project contains a Spring Boot application that downloads files from an SFTP server based on the current date. Downloaded file names are stored in a PostgreSQL database so they are not retrieved twice.
 
 ## Configuration
 
-Edit `src/main/resources/application.yml` to set the SFTP connection properties
-and local download directory. The file contains an example using the credentials
-provided:
+Edit `src/main/resources/application.yml` to set the SFTP connection properties,
+local download directory and database settings. The file contains an example
+using the credentials provided:
 
 ```
 sftp:
@@ -16,6 +16,15 @@ sftp:
   password: lolik228
   remote-dir: /
   local-dir: ./download  # or D:\app\Sends on Windows
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sftpdb
+    username: sftpuser
+    password: sftppass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
 ```
 
 ## Running
@@ -27,7 +36,7 @@ mvn package
 java -jar target/sftp-downloader-1.0.0.jar
 ```
 
-The service checks the SFTP server every minute and downloads the newest file if its modification time is newer than the last downloaded file.
+The service checks the SFTP server every minute and downloads all files whose modification date matches today's date. A progress bar is displayed for each file and information about downloaded files is saved in PostgreSQL. After every download the service logs a comparison of files on the server versus those already stored locally for the past week.
 
 ## Importing into IntelliJ IDEA
 
@@ -35,3 +44,14 @@ The service checks the SFTP server every minute and downloads the newest file if
 2. In IntelliJ IDEA, choose **File → Open** and select the `sftp-downloader` directory.
 3. IDEA will detect the Maven project and download the required dependencies.
 4. To run the application, use the Maven `spring-boot:run` goal or run the `SftpDownloaderApplication` class.
+
+## Docker
+
+To build and run the application in Docker:
+
+```bash
+docker build -t sftp-downloader .
+docker run --network=host sftp-downloader
+```
+
+The container expects PostgreSQL to be available according to the properties in `application.yml`.

@@ -1,2 +1,4 @@
 sftp-downloader/download/
 **/lastDownloadTime.txt
+target/
+mvn.log

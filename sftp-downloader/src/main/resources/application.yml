@@ -6,6 +6,15 @@ sftp:
   remote-dir: /
   # local-dir can be an absolute path like D:\app\Sends on Windows
   local-dir: ./download
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sftpdb
+    username: sftpuser
+    password: sftppass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
 logging:
   level:
     root: INFO
