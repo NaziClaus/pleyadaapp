@@ -84,7 +84,10 @@ public class SftpDownloadService {
     }
 
     private void downloadFile(ChannelSftp sftp, ChannelSftp.LsEntry entry) throws Exception {
-        String remotePath = properties.getRemoteDir() + "/" + entry.getFilename();
+        String remoteDir = properties.getRemoteDir();
+        String remotePath = remoteDir.endsWith("/")
+                ? remoteDir + entry.getFilename()
+                : remoteDir + "/" + entry.getFilename();
         Path localPath = Path.of(properties.getLocalDir(), entry.getFilename());
 
         long remoteSize = entry.getAttrs().getSize();
@@ -93,7 +96,12 @@ public class SftpDownloadService {
 
         try (InputStream in = sftp.get(remotePath); FileOutputStream out = new FileOutputStream(localPath.toFile(), existing > 0)) {
             if (existing > 0) {
-                in.skip(existing);
+                long skipped = 0;
+                while (skipped < existing) {
+                    long s = in.skip(existing - skipped);
+                    if (s <= 0) break;
+                    skipped += s;
+                }
             }
             byte[] buffer = new byte[8192];
             long transferred = existing;
