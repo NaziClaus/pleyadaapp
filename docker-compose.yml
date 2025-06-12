@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: sftpdb
+      POSTGRES_USER: sftpuser
+      POSTGRES_PASSWORD: sftppass
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sftpdb
+      SPRING_DATASOURCE_USERNAME: sftpuser
+      SPRING_DATASOURCE_PASSWORD: sftppass
+    volumes:
+      - ./download:/app/download
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  db-data:

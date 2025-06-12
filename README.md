@@ -45,13 +45,14 @@ The service checks the SFTP server every minute and downloads all files whose mo
 3. IDEA will detect the Maven project and download the required dependencies.
 4. To run the application, use the Maven `spring-boot:run` goal or run the `SftpDownloaderApplication` class.
 
-## Docker
+## Docker Compose
 
-To build and run the application in Docker:
+Use Docker Compose to run the application together with PostgreSQL. The
+provided `docker-compose.yml` builds the project and starts both containers.
 
 ```bash
-docker build -t sftp-downloader .
-docker run --network=host sftp-downloader
+docker compose up --build
 ```
 
-The container expects PostgreSQL to be available according to the properties in `application.yml`.
+Downloaded files are stored in the `download` directory on your host machine.
+Database data persists in a named Docker volume.

@@ -8,7 +8,7 @@ sftp:
   local-dir: ./download
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/sftpdb
+    url: jdbc:postgresql://localhost:5432/sftpdb  # overridden in docker-compose
     username: sftpuser
     password: sftppass
     driver-class-name: org.postgresql.Driver
