@@ -1,9 +1,10 @@
 sftp:
-  host: example.com
+  host: 146.59.54.218
   port: 22
-  username: user
-  password: pass
-  remote-dir: /remote/path
+  username: ftpuser
+  password: lolik228
+  remote-dir: /
+  # local-dir can be an absolute path like D:\app\Sends on Windows
   local-dir: ./download
 logging:
   level:
