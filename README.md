@@ -47,12 +47,13 @@ The service checks the SFTP server every minute and downloads all files whose mo
 
 ## Docker Compose
 
-Use Docker Compose to run the application together with PostgreSQL. The
-provided `docker-compose.yml` builds the project and starts both containers.
+Use Docker Compose to run the application together with PostgreSQL. Execute the
+command from the repository root so the Docker build context includes the
+`sftp-downloader` module.
 
 ```bash
 docker compose up --build
 ```
 
-Downloaded files are stored in the `download` directory on your host machine.
-Database data persists in a named Docker volume.
+Downloaded files are stored in the `download` directory on your host machine and
+database data persists in a named Docker volume.
