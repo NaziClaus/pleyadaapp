@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  app:
+    image: myapp:latest
+    environment:
+      SFTP_HOST: ${SFTP_HOST}
+      SFTP_PORT: ${SFTP_PORT:-22}
+      SFTP_USERNAME: ${SFTP_USERNAME}
+      SFTP_PASSWORD: ${SFTP_PASSWORD}
+      SFTP_REMOTE_PATH: ${SFTP_REMOTE_PATH:-/}

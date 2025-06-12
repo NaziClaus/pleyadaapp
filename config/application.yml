@@ -1,0 +1,6 @@
+sftp:
+  host: ${SFTP_HOST:}
+  port: ${SFTP_PORT:22}
+  username: ${SFTP_USERNAME:}
+  password: ${SFTP_PASSWORD:}
+  remote_path: ${SFTP_REMOTE_PATH:/}
