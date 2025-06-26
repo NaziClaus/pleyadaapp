@@ -24,10 +24,10 @@ services:
       SFTP_USER: ${SFTP_USER}
       SFTP_PASS: ${SFTP_PASS}
       SFTP_DIR: ${SFTP_DIR}
-      LOCAL_DIR: /downloads
-      CSV_PATH: /downloads/download_log.csv
+      LOCAL_DIR: ${LOCAL_DIR:-/data}
+      CSV_PATH: ${CSV_PATH:-/data/download_log.csv}
     volumes:
-      - ./downloads:/downloads
+      - ${HOST_STORAGE:-./downloads}:${LOCAL_DIR:-/data}
     restart: always
 volumes:
   db-data:
