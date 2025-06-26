@@ -28,6 +28,10 @@ services:
       CSV_PATH: ${CSV_PATH:-/data/download_log.csv}
     volumes:
       - ${HOST_STORAGE:-./downloads}:${LOCAL_DIR:-/data}
+      LOCAL_DIR: /downloads
+      CSV_PATH: /downloads/download_log.csv
+    volumes:
+      - ./downloads:/downloads
     restart: always
 volumes:
   db-data:
