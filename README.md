@@ -5,12 +5,11 @@ Metadata about all files is stored in PostgreSQL, and downloaded files are track
 
 ## Usage
 
-Place `docker-compose.yml`, the built `jar` file and your `.env` file in the same directory. The `.env` file defines database, SFTP and local storage settings (the `HOST_STORAGE` variable controls where files are saved on the host). Then run:
+Place `docker-compose.yml`, the built `jar` file and your `.env` file in the same directory. The `.env` file defines database, SFTP and local storage settings. Then run:
 
 ```bash
 docker-compose up --build
 ```
 
-The `.env` file should define database and SFTP credentials as well as the `HOST_STORAGE`
-path on the host system. The container uses `LOCAL_DIR` and `CSV_PATH` to know
-where to place files internally. See `.env.example` for an example.
+`HOST_STORAGE` specifies the host directory for downloads. Inside the container the files are saved to `LOCAL_DIR` (default `/data`) and logged to `CSV_PATH`.
+See `.env.example` for an example.
