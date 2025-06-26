@@ -48,7 +48,10 @@ public class DownloadService {
     public void scanAndDownload() {
         try {
             Files.createDirectories(Path.of(localDir));
-            Files.createDirectories(Path.of(csvPath).getParent());
+            Path csvParent = Path.of(csvPath).getParent();
+            if (csvParent != null) {
+                Files.createDirectories(csvParent);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

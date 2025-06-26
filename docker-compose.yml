@@ -16,18 +16,18 @@ services:
       - db
     env_file: .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
-      SFTP_HOST: ${SFTP_HOST}
-      SFTP_PORT: ${SFTP_PORT}
-      SFTP_USER: ${SFTP_USER}
-      SFTP_PASS: ${SFTP_PASS}
-      SFTP_DIR: ${SFTP_DIR}
-      LOCAL_DIR: ${LOCAL_DIR:-/data}
-      CSV_PATH: ${CSV_PATH:-/data/download_log.csv}
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://db:5432/${DB_NAME}"
+      SPRING_DATASOURCE_USERNAME: "${DB_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASS}"
+      SFTP_HOST: "${SFTP_HOST}"
+      SFTP_PORT: "${SFTP_PORT}"
+      SFTP_USER: "${SFTP_USER}"
+      SFTP_PASS: "${SFTP_PASS}"
+      SFTP_DIR: "${SFTP_DIR}"
+      LOCAL_DIR: "${LOCAL_DIR:-/data}"
+      CSV_PATH: "${CSV_PATH:-/data/download_log.csv}"
     volumes:
-      - ${HOST_STORAGE:-./downloads}:${LOCAL_DIR:-/data}
+      - "${HOST_STORAGE:-./downloads}:${LOCAL_DIR:-/data}"
       LOCAL_DIR: /downloads
       CSV_PATH: /downloads/download_log.csv
     volumes:
